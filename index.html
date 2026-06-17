@@ -274,6 +274,7 @@ let state = {
   confirmDelete: false,
   editingMeta: false,
   draft: null,
+  importPreview: null, // { pieces, photoCount } pending confirmation
 };
 
 function setState(patch) {
@@ -324,6 +325,77 @@ function removePhotoFromPiece(id, photoId) {
 }
 
 // ============================================================
+// EXPORT / IMPORT
+// ============================================================
+function exportBackup() {
+  if (state.pieces.length === 0) {
+    showToast("Nothing to export yet — add a piece first");
+    return;
+  }
+  const payload = {
+    app: "rws-studio-tracker",
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    pieces: state.pieces,
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  const dateStr = new Date().toISOString().slice(0, 10);
+  a.href = url;
+  a.download = `studio-tracker-backup-${dateStr}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast("Backup downloaded");
+}
+
+function countPhotos(pieces) {
+  return pieces.reduce((sum, p) => sum + ((p.photos && p.photos.length) || 0), 0);
+}
+
+function handleImportFile(file) {
+  const reader = new FileReader();
+  reader.onload = () => {
+    let parsed;
+    try {
+      parsed = JSON.parse(reader.result);
+    } catch (e) {
+      showToast("That file isn't a valid backup — couldn't read it");
+      return;
+    }
+    const pieces = Array.isArray(parsed) ? parsed : parsed.pieces;
+    if (!Array.isArray(pieces)) {
+      showToast("That file doesn't look like a studio tracker backup");
+      return;
+    }
+    // basic shape check on first item
+    if (pieces.length && (typeof pieces[0].title === "undefined" || typeof pieces[0].id === "undefined")) {
+      showToast("That file doesn't look like a studio tracker backup");
+      return;
+    }
+    setState({ importPreview: { pieces, photoCount: countPhotos(pieces) } });
+  };
+  reader.onerror = () => showToast("Couldn't read that file, try again");
+  reader.readAsText(file);
+}
+
+function applyImport(mode) {
+  const incoming = state.importPreview.pieces;
+  if (mode === "replace") {
+    state.pieces = incoming;
+  } else if (mode === "merge") {
+    const existingIds = new Set(state.pieces.map(p => p.id));
+    const toAdd = incoming.filter(p => !existingIds.has(p.id));
+    state.pieces = [...toAdd, ...state.pieces];
+  }
+  state.importPreview = null;
+  persistAndRender();
+  showToast(mode === "replace" ? "Backup restored" : "Backup merged into your catalog");
+}
+
+// ============================================================
 // RENDER: ROOT
 // ============================================================
 function render() {
@@ -333,6 +405,7 @@ function render() {
   else if (state.view === "detail") app.innerHTML = renderDetail();
   attachHandlers();
   renderLightbox();
+  renderImportModal();
 }
 
 // ============================================================
@@ -361,7 +434,12 @@ function renderCatalog() {
         <h1 class="title serif">Studio Catalog</h1>
         <p class="subtext">${allCount} ${allCount === 1 ? "piece" : "pieces"} tracked · saved on this device</p>
       </div>
-      <button class="btn-primary" id="btn-new-piece">+ Add a piece</button>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn-ghost" id="btn-export" title="Download a backup file of all your pieces and photos">⬇ Export backup</button>
+        <button class="btn-ghost" id="btn-import" title="Restore or merge pieces from a backup file">⬆ Import backup</button>
+        <input type="file" id="import-input" accept="application/json,.json" class="hidden">
+        <button class="btn-primary" id="btn-new-piece">+ Add a piece</button>
+      </div>
     </header>
 
     <div class="filters">
@@ -609,6 +687,43 @@ document.addEventListener("keydown", (e) => {
 });
 
 // ============================================================
+// IMPORT PREVIEW MODAL
+// ============================================================
+function renderImportModal() {
+  let existing = document.getElementById("import-overlay");
+  if (existing) existing.remove();
+  if (!state.importPreview) return;
+
+  const { pieces, photoCount } = state.importPreview;
+  const overlay = document.createElement("div");
+  overlay.id = "import-overlay";
+  overlay.className = "lightbox-overlay";
+  overlay.innerHTML = `
+    <div style="background:var(--parchment);border-radius:14px;padding:26px;max-width:420px;width:90vw;">
+      <h3 class="serif" style="font-size:20px;font-weight:600;margin:0 0 10px;">Import backup</h3>
+      <p style="font-size:14px;color:var(--ink-soft);line-height:1.5;margin:0 0 18px;">
+        This file contains <strong>${pieces.length}</strong> ${pieces.length === 1 ? "piece" : "pieces"} and <strong>${photoCount}</strong> ${photoCount === 1 ? "photo" : "photos"}.
+        You currently have <strong>${state.pieces.length}</strong> ${state.pieces.length === 1 ? "piece" : "pieces"} saved on this device.
+      </p>
+      <p style="font-size:13.5px;color:var(--ink-soft);line-height:1.5;margin:0 0 18px;">
+        <strong>Merge</strong> adds these pieces alongside what's already here (skipping any exact duplicates).
+        <strong>Replace</strong> deletes everything currently on this device and uses only the backup.
+      </p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn-primary" id="btn-import-merge">Merge</button>
+        <button class="btn-danger" id="btn-import-replace" style="border-radius:8px;padding:11px 16px;">Replace everything</button>
+        <button class="btn-ghost" id="btn-import-cancel">Cancel</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+  overlay.addEventListener("click", (e) => { if (e.target === overlay) setState({ importPreview: null }); });
+  document.getElementById("btn-import-merge").addEventListener("click", () => applyImport("merge"));
+  document.getElementById("btn-import-replace").addEventListener("click", () => applyImport("replace"));
+  document.getElementById("btn-import-cancel").addEventListener("click", () => setState({ importPreview: null }));
+}
+
+// ============================================================
 // EVENT HANDLERS
 // ============================================================
 function attachHandlers() {
@@ -618,6 +733,20 @@ function attachHandlers() {
 
   const btnEmptyNew = document.getElementById("btn-empty-new");
   if (btnEmptyNew) btnEmptyNew.addEventListener("click", () => setState({ view: "new" }));
+
+  const btnExport = document.getElementById("btn-export");
+  if (btnExport) btnExport.addEventListener("click", exportBackup);
+
+  const btnImport = document.getElementById("btn-import");
+  const importInput = document.getElementById("import-input");
+  if (btnImport && importInput) {
+    btnImport.addEventListener("click", () => importInput.click());
+    importInput.addEventListener("change", (e) => {
+      const file = e.target.files && e.target.files[0];
+      if (file) handleImportFile(file);
+      e.target.value = "";
+    });
+  }
 
   const searchInput = document.getElementById("search-input");
   if (searchInput) {
