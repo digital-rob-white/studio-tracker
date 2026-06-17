@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Rob White Studio — Catalog</title>
+<meta name="theme-color" content="#2B2825">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Studio">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%232B2825'/%3E%3Ctext x='50' y='68' font-size='60' text-anchor='middle' fill='%23B5562F'%3E%F0%9F%AA%B5%3C/text%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%232B2825'/%3E%3Ctext x='50' y='68' font-size='60' text-anchor='middle' fill='%23B5562F'%3E%F0%9F%AA%B5%3C/text%3E%3C/svg%3E">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --charcoal: #2B2825;
+    --parchment: #F6F1E7;
+    --clay: #B5562F;
+    --clay-dark: #9C4423;
+    --sage: #6B7560;
+    --gold: #C9A35C;
+    --ink-soft: #6B6356;
+    --ink-faint: #8C8273;
+    --line: #E4DCC9;
+    --line-soft: #ECE4D2;
+    --card-bg: #ffffff;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    background: var(--parchment);
+    color: var(--charcoal);
+    -webkit-tap-highlight-color: transparent;
+  }
+  .serif { font-family: 'Fraunces', Georgia, serif; }
+  img { -webkit-user-drag: none; }
+  button { font-family: inherit; }
+  input, select, textarea { font-family: inherit; }
+  input:focus, textarea:focus, select:focus, button:focus-visible {
+    outline: 2px solid var(--clay); outline-offset: 1px;
+  }
+  ::-webkit-scrollbar { height: 8px; width: 8px; }
+  ::-webkit-scrollbar-thumb { background: #D8CFBC; border-radius: 8px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+
+  #app { max-width: 1140px; margin: 0 auto; padding: 24px 18px 70px; min-height: 100vh; }
+
+  /* header */
+  .header { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px; margin-bottom: 20px; }
+  .eyebrow { display: flex; align-items: center; gap: 8px; color: var(--clay); font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 600; margin-bottom: 6px; }
+  h1.title { font-size: 32px; font-weight: 600; margin: 0; }
+  .subtext { margin: 6px 0 0; color: var(--ink-soft); font-size: 14.5px; }
+  .btn-primary {
+    display: flex; align-items: center; gap: 8px; background: var(--clay); color: #fff; border: none;
+    border-radius: 8px; padding: 12px 18px; font-size: 14.5px; font-weight: 600; cursor: pointer;
+    box-shadow: 0 4px 12px rgba(181,86,47,0.3); white-space: nowrap; transition: background 0.15s ease;
+  }
+  .btn-primary:hover { background: var(--clay-dark); }
+  .btn-ghost {
+    background: transparent; border: 1px solid var(--line); border-radius: 7px; padding: 7px 14px;
+    font-size: 13px; cursor: pointer; color: var(--ink-soft);
+  }
+  .btn-dark { background: var(--charcoal); color: var(--parchment); border: none; border-radius: 8px; padding: 11px 18px; font-size: 14px; cursor: pointer; }
+  .btn-back { display: flex; align-items: center; gap: 4px; background: transparent; border: none; color: var(--ink-soft); font-size: 13.5px; cursor: pointer; padding: 0; }
+
+  /* filters */
+  .filters { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 18px; align-items: center; }
+  .search-box { display: flex; align-items: center; gap: 6px; background: #fff; border: 1px solid var(--line); border-radius: 7px; padding: 8px 12px; flex: 1 1 200px; min-width: 160px; }
+  .search-box input { border: none; outline: none; font-size: 14px; width: 100%; background: transparent; color: var(--charcoal); }
+  select.filter-select { border: 1px solid var(--line); border-radius: 7px; padding: 8px 10px; font-size: 13.5px; background: #fff; color: var(--charcoal); cursor: pointer; }
+  .save-state { margin-left: auto; font-size: 12.5px; color: var(--ink-faint); }
+
+  /* legend */
+  .legend { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 22px; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--ink-soft); }
+  .dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+
+  /* catalog grid */
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
+  .card {
+    background: var(--card-bg); border-radius: 12px; overflow: hidden; cursor: pointer;
+    border: 1px solid var(--line-soft); display: flex; flex-direction: column;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .card:hover { transform: translateY(-3px); box-shadow: 0 10px 24px rgba(43,40,37,0.14); }
+  .card-photo { height: 150px; background: #EFE8D8; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+  .card-photo img { width: 100%; height: 100%; object-fit: cover; }
+  .badge-status { position: absolute; top: 8px; left: 8px; color: #fff; font-size: 10.5px; font-weight: 600; padding: 3px 8px; border-radius: 20px; letter-spacing: 0.03em; }
+  .badge-count { position: absolute; bottom: 8px; right: 8px; background: rgba(0,0,0,0.55); color: #fff; font-size: 10.5px; padding: 2px 7px; border-radius: 20px; }
+  .card-body { padding: 12px 14px 14px; }
+  .card-title { font-size: 16px; font-weight: 600; margin-bottom: 2px; }
+  .card-medium { font-size: 12.5px; color: var(--ink-faint); margin-bottom: 8px; }
+  .card-bottom { display: flex; justify-content: space-between; align-items: baseline; }
+  .card-dims { font-size: 13px; color: var(--ink-soft); }
+  .card-price { font-size: 15px; font-weight: 600; color: var(--clay); }
+
+  /* empty state */
+  .empty { text-align: center; padding: 64px 20px; border: 1.5px dashed #D8CFBC; border-radius: 12px; background: rgba(255,255,255,0.4); }
+  .empty .emoji { font-size: 36px; margin-bottom: 10px; }
+  .empty h3 { font-size: 19px; margin: 0 0 6px; }
+  .empty p { color: var(--ink-faint); font-size: 14px; margin: 0 0 18px; }
+
+  /* forms */
+  .field { display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: var(--ink-soft); margin-bottom: 16px; }
+  .field input, .field select, .field textarea {
+    border: 1px solid var(--line); border-radius: 7px; padding: 11px 12px; font-size: 15px;
+    color: var(--charcoal); background: #fff; width: 100%;
+  }
+  .field textarea { resize: vertical; }
+  .field-row { display: flex; gap: 14px; }
+  .field-row .field { flex: 1; }
+  .form-actions { display: flex; gap: 10px; margin-top: 4px; }
+  .hint { font-size: 12.5px; color: var(--ink-faint); margin: 10px 0 0; }
+
+  /* detail view */
+  .detail-header { display: flex; justify-content: space-between; align-items: flex-start; margin-top: 16px; gap: 16px; flex-wrap: wrap; }
+  .detail-title { font-size: 28px; font-weight: 600; margin: 0 0 6px; }
+  .detail-meta { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; font-size: 13.5px; color: var(--ink-soft); }
+  .meta-dot { width: 3px; height: 3px; border-radius: 50%; background: #C7BEA8; display: inline-block; }
+  .price-meta { color: var(--clay); font-weight: 600; }
+
+  .status-row { margin-top: 18px; margin-bottom: 22px; }
+  .status-label { font-size: 12px; color: var(--ink-faint); margin-bottom: 8px; letter-spacing: 0.04em; text-transform: uppercase; }
+  .status-pills { display: flex; gap: 8px; flex-wrap: wrap; }
+  .pill {
+    display: flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 20px; font-size: 13px;
+    font-weight: 600; cursor: pointer; border: 1.5px solid var(--line); background: #fff; color: var(--ink-soft);
+    transition: all 0.15s ease; -webkit-tap-highlight-color: transparent;
+  }
+  .pill.active { color: #fff; border-color: transparent; }
+
+  .notes-box { background: #fff; border: 1px solid var(--line-soft); border-radius: 10px; padding: 14px 16px; margin-bottom: 24px; font-size: 14px; color: #5C5447; line-height: 1.5; }
+
+  .photos-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .photos-header h3 { font-size: 18px; font-weight: 600; margin: 0; }
+  .photos-count { font-size: 12.5px; color: var(--ink-faint); }
+
+  .filmstrip { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 10px; -webkit-overflow-scrolling: touch; }
+  .add-photo-btn {
+    flex: 0 0 130px; height: 130px; border: 1.5px dashed #C7BEA8; border-radius: 10px; background: rgba(255,255,255,0.5);
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; cursor: pointer; color: var(--ink-faint);
+  }
+  .add-photo-btn span { font-size: 12.5px; font-weight: 600; }
+  .photo-thumb { flex: 0 0 130px; height: 130px; border-radius: 10px; overflow: hidden; position: relative; border: 1px solid var(--line-soft); cursor: pointer; }
+  .photo-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .photo-index { position: absolute; top: 6px; left: 6px; background: rgba(43,40,37,0.7); color: #fff; font-size: 10.5px; padding: 2px 7px; border-radius: 12px; }
+  .photo-remove {
+    position: absolute; top: 6px; right: 6px; background: rgba(43,40,37,0.7); border: none; color: #fff; border-radius: 50%;
+    width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; cursor: pointer;
+  }
+
+  .danger-zone { margin-top: 46px; padding-top: 20px; border-top: 1px solid var(--line-soft); }
+  .danger-link { display: flex; align-items: center; gap: 6px; background: transparent; border: none; color: #A66; font-size: 13px; cursor: pointer; padding: 0; }
+  .danger-confirm { display: flex; align-items: center; gap: 12px; font-size: 13.5px; color: var(--ink-soft); flex-wrap: wrap; }
+  .btn-danger { background: #A33; color: #fff; border: none; border-radius: 6px; padding: 7px 13px; cursor: pointer; font-size: 13px; }
+
+  /* lightbox */
+  .lightbox-overlay {
+    position: fixed; inset: 0; background: rgba(20,18,15,0.94); z-index: 300; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; padding: 20px;
+  }
+  .lightbox-img-wrap { max-width: 92vw; max-height: 76vh; }
+  .lightbox-img-wrap img { max-width: 92vw; max-height: 76vh; border-radius: 6px; display: block; }
+  .lightbox-nav { color: var(--parchment); margin-top: 16px; font-size: 13.5px; display: flex; align-items: center; gap: 18px; }
+  .lightbox-nav button { background: transparent; border: none; color: var(--parchment); cursor: pointer; font-size: 14px; }
+  .lightbox-nav button:disabled { color: #665F52; cursor: default; }
+  .lightbox-close {
+    position: absolute; top: 18px; right: 20px; background: rgba(255,255,255,0.1); border: none; color: var(--parchment);
+    border-radius: 50%; width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 18px;
+  }
+
+  .toast {
+    position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%); background: var(--charcoal); color: var(--parchment);
+    padding: 11px 22px; border-radius: 8px; font-size: 14px; box-shadow: 0 8px 20px rgba(0,0,0,0.25); z-index: 200;
+    opacity: 0; transition: opacity 0.25s ease; pointer-events: none;
+  }
+  .toast.show { opacity: 1; }
+
+  .hidden { display: none !important; }
+
+  @media (max-width: 520px) {
+    h1.title { font-size: 26px; }
+    .detail-title { font-size: 24px; }
+    .card-photo { height: 130px; }
+  }
+</style>
+</head>
+<body>
+
+<div id="app"></div>
+<div id="toast" class="toast"></div>
+
+<script>
+// ============================================================
+// DATA + STORAGE
+// ============================================================
+const STORAGE_KEY = "rws_pieces_v1";
+
+const STATUSES = [
+  { id: "concept", label: "Concept", color: "#8C8273" },
+  { id: "in_progress", label: "In Progress", color: "#6B7560" },
+  { id: "finishing", label: "Finishing", color: "#C9A35C" },
+  { id: "available", label: "Available", color: "#B5562F" },
+  { id: "sold", label: "Sold", color: "#2B2825" },
+];
+const MEDIUMS = ["Painting", "Custom Canvas", "Frame", "Sculpture", "Custom Furniture"];
+
+function statusMeta(id) { return STATUSES.find(s => s.id === id) || STATUSES[0]; }
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
+function escapeHtml(str) {
+  const div = document.createElement("div");
+  div.textContent = str == null ? "" : String(str);
+  return div.innerHTML;
+}
+
+function loadPieces() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch (e) {
+    console.error("Failed to load pieces", e);
+    return [];
+  }
+}
+function savePieces(pieces) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(pieces));
+    return true;
+  } catch (e) {
+    console.error("Failed to save pieces", e);
+    return false;
+  }
+}
+
+function fileToDataUrl(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+function compressImage(dataUrl, maxDim = 1100, quality = 0.78) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => {
+      let { width, height } = img;
+      if (width > height && width > maxDim) { height = Math.round(height * maxDim / width); width = maxDim; }
+      else if (height > maxDim) { width = Math.round(width * maxDim / height); height = maxDim; }
+      const canvas = document.createElement("canvas");
+      canvas.width = width; canvas.height = height;
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(img, 0, 0, width, height);
+      resolve(canvas.toDataURL("image/jpeg", quality));
+    };
+    img.onerror = () => resolve(dataUrl);
+    img.src = dataUrl;
+  });
+}
+
+// ============================================================
+// STATE
+// ============================================================
+let state = {
+  pieces: loadPieces(),
+  view: "catalog", // catalog | new | detail
+  activeId: null,
+  filterStatus: "all",
+  filterMedium: "all",
+  search: "",
+  lightbox: null, // { idx }
+  confirmDelete: false,
+  editingMeta: false,
+  draft: null,
+};
+
+function setState(patch) {
+  state = { ...state, ...patch };
+  render();
+}
+
+function showToast(msg) {
+  const el = document.getElementById("toast");
+  el.textContent = msg;
+  el.classList.add("show");
+  setTimeout(() => el.classList.remove("show"), 2000);
+}
+
+function persistAndRender() {
+  const ok = savePieces(state.pieces);
+  if (!ok) showToast("Couldn't save — your browser storage may be full");
+  render();
+}
+
+// ============================================================
+// MUTATIONS
+// ============================================================
+function addPiece(piece) {
+  state.pieces = [{ ...piece, id: uid(), createdAt: Date.now() }, ...state.pieces];
+  state.view = "catalog";
+  persistAndRender();
+  showToast("Piece added to studio");
+}
+function updatePiece(id, patch) {
+  state.pieces = state.pieces.map(p => p.id === id ? { ...p, ...patch } : p);
+  persistAndRender();
+}
+function deletePieceById(id) {
+  state.pieces = state.pieces.filter(p => p.id !== id);
+  state.view = "catalog";
+  state.confirmDelete = false;
+  persistAndRender();
+  showToast("Piece removed");
+}
+function addPhotosToPiece(id, photos) {
+  state.pieces = state.pieces.map(p => p.id === id ? { ...p, photos: [...(p.photos || []), ...photos] } : p);
+  persistAndRender();
+}
+function removePhotoFromPiece(id, photoId) {
+  state.pieces = state.pieces.map(p => p.id === id ? { ...p, photos: (p.photos || []).filter(ph => ph.id !== photoId) } : p);
+  persistAndRender();
+}
+
+// ============================================================
+// RENDER: ROOT
+// ============================================================
+function render() {
+  const app = document.getElementById("app");
+  if (state.view === "catalog") app.innerHTML = renderCatalog();
+  else if (state.view === "new") app.innerHTML = renderNewPiece();
+  else if (state.view === "detail") app.innerHTML = renderDetail();
+  attachHandlers();
+  renderLightbox();
+}
+
+// ============================================================
+// CATALOG VIEW
+// ============================================================
+function getFilteredPieces() {
+  return state.pieces.filter(p => {
+    if (state.filterStatus !== "all" && p.status !== state.filterStatus) return false;
+    if (state.filterMedium !== "all" && p.medium !== state.filterMedium) return false;
+    if (state.search.trim()) {
+      const q = state.search.trim().toLowerCase();
+      if (!p.title.toLowerCase().includes(q) && !(p.notes || "").toLowerCase().includes(q)) return false;
+    }
+    return true;
+  });
+}
+
+function renderCatalog() {
+  const pieces = getFilteredPieces();
+  const allCount = state.pieces.length;
+
+  return `
+    <header class="header">
+      <div>
+        <div class="eyebrow">🔨 Rob White Studio</div>
+        <h1 class="title serif">Studio Catalog</h1>
+        <p class="subtext">${allCount} ${allCount === 1 ? "piece" : "pieces"} tracked · saved on this device</p>
+      </div>
+      <button class="btn-primary" id="btn-new-piece">+ Add a piece</button>
+    </header>
+
+    <div class="filters">
+      <div class="search-box">
+        <span>🔎</span>
+        <input id="search-input" placeholder="Search pieces or notes..." value="${escapeHtml(state.search)}">
+      </div>
+      <select class="filter-select" id="filter-status">
+        <option value="all">All statuses</option>
+        ${STATUSES.map(s => `<option value="${s.id}" ${state.filterStatus === s.id ? "selected" : ""}>${s.label}</option>`).join("")}
+      </select>
+      <select class="filter-select" id="filter-medium">
+        <option value="all">All mediums</option>
+        ${MEDIUMS.map(m => `<option value="${m}" ${state.filterMedium === m ? "selected" : ""}>${m}</option>`).join("")}
+      </select>
+      <div class="save-state">All changes saved to this browser</div>
+    </div>
+
+    <div class="legend">
+      ${STATUSES.map(s => `<div class="legend-item"><span class="dot" style="background:${s.color}"></span>${s.label}</div>`).join("")}
+    </div>
+
+    ${pieces.length === 0 ? renderEmptyState(allCount > 0) : `<div class="grid">${pieces.map(renderPieceCard).join("")}</div>`}
+  `;
+}
+
+function renderEmptyState(hasAny) {
+  return `
+    <div class="empty">
+      <div class="emoji">🪵</div>
+      <h3 class="serif">${hasAny ? "No pieces match these filters" : "Your studio wall is empty"}</h3>
+      <p>${hasAny ? "Try clearing a filter or search term." : "Add your first piece to start tracking progress photos and inventory."}</p>
+      ${!hasAny ? `<button class="btn-dark" id="btn-empty-new">Add your first piece</button>` : ""}
+    </div>
+  `;
+}
+
+function renderPieceCard(piece) {
+  const cover = piece.photos && piece.photos.length ? piece.photos[piece.photos.length - 1] : null;
+  const meta = statusMeta(piece.status);
+  return `
+    <div class="card" data-open-id="${piece.id}">
+      <div class="card-photo">
+        ${cover ? `<img src="${cover.dataUrl}" alt="${escapeHtml(piece.title)}">` : `<span style="font-size:22px;color:#C7BEA8">🖼️</span>`}
+        <span class="badge-status" style="background:${meta.color}">${meta.label}</span>
+        ${piece.photos && piece.photos.length > 1 ? `<span class="badge-count">${piece.photos.length} photos</span>` : ""}
+      </div>
+      <div class="card-body">
+        <div class="card-title serif">${escapeHtml(piece.title || "Untitled piece")}</div>
+        <div class="card-medium">${escapeHtml(piece.medium)}</div>
+        <div class="card-bottom">
+          <span class="card-dims">${escapeHtml(piece.dimensions || "—")}</span>
+          <span class="card-price">${piece.price ? "$" + Number(piece.price).toLocaleString() : ""}</span>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// ============================================================
+// NEW PIECE VIEW
+// ============================================================
+function renderNewPiece() {
+  return `
+    <div style="max-width:600px;margin:0 auto;">
+      <button class="btn-back" id="btn-back-catalog">← Back to catalog</button>
+      <h2 class="serif" style="font-size:24px;font-weight:600;margin:16px 0 20px;">Add a new piece</h2>
+      <form id="new-piece-form">
+        <div class="field">
+          <label for="np-title">Title</label>
+          <input id="np-title" autofocus placeholder="e.g. Coastal Oak Console" required>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="np-medium">Medium</label>
+            <select id="np-medium">${MEDIUMS.map(m => `<option value="${m}">${m}</option>`).join("")}</select>
+          </div>
+          <div class="field">
+            <label for="np-status">Status</label>
+            <select id="np-status">${STATUSES.map(s => `<option value="${s.id}">${s.label}</option>`).join("")}</select>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="np-dimensions">Dimensions</label>
+            <input id="np-dimensions" placeholder='e.g. 24" x 36"'>
+          </div>
+          <div class="field">
+            <label for="np-price">Price (USD)</label>
+            <input id="np-price" type="number" placeholder="e.g. 1200">
+          </div>
+        </div>
+        <div class="field">
+          <label for="np-notes">Notes</label>
+          <textarea id="np-notes" rows="3" placeholder="Wood source, client commission details, technique notes..."></textarea>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn-primary">Add piece</button>
+          <button type="button" class="btn-ghost" id="btn-cancel-new">Cancel</button>
+        </div>
+        <p class="hint">You can add progress photos once the piece is created.</p>
+      </form>
+    </div>
+  `;
+}
+
+// ============================================================
+// DETAIL VIEW
+// ============================================================
+function renderDetail() {
+  const piece = state.pieces.find(p => p.id === state.activeId);
+  if (!piece) { state.view = "catalog"; return renderCatalog(); }
+  const meta = statusMeta(piece.status);
+  const photos = piece.photos || [];
+
+  const metaBlock = state.editingMeta ? `
+    <div style="display:flex;flex-direction:column;gap:10px;max-width:420px;">
+      <input id="em-title" value="${escapeHtml(piece.title)}">
+      <div style="display:flex;gap:10px;">
+        <select id="em-medium" style="flex:1;border:1px solid var(--line);border-radius:7px;padding:11px 12px;font-size:15px;">
+          ${MEDIUMS.map(m => `<option value="${m}" ${piece.medium === m ? "selected" : ""}>${m}</option>`).join("")}
+        </select>
+        <input id="em-dimensions" value="${escapeHtml(piece.dimensions || "")}" placeholder="Dimensions" style="flex:1;border:1px solid var(--line);border-radius:7px;padding:11px 12px;font-size:15px;">
+      </div>
+      <input id="em-price" type="number" value="${piece.price || ""}" placeholder="Price" style="border:1px solid var(--line);border-radius:7px;padding:11px 12px;font-size:15px;">
+      <textarea id="em-notes" rows="3" placeholder="Notes" style="border:1px solid var(--line);border-radius:7px;padding:11px 12px;font-size:15px;resize:vertical;">${escapeHtml(piece.notes || "")}</textarea>
+      <div style="display:flex;gap:8px;">
+        <button class="btn-dark" id="btn-save-meta" style="padding:8px 16px;font-size:13.5px;">Save</button>
+        <button class="btn-ghost" id="btn-cancel-meta">Cancel</button>
+      </div>
+    </div>
+  ` : `
+    <h2 class="detail-title serif">${escapeHtml(piece.title)}</h2>
+    <div class="detail-meta">
+      <span>${escapeHtml(piece.medium)}</span>
+      ${piece.dimensions ? `<span class="meta-dot"></span><span>${escapeHtml(piece.dimensions)}</span>` : ""}
+      ${piece.price ? `<span class="meta-dot"></span><span class="price-meta">$${Number(piece.price).toLocaleString()}</span>` : ""}
+    </div>
+  `;
+
+  return `
+    <button class="btn-back" id="btn-back-catalog">← Back to catalog</button>
+
+    <div class="detail-header">
+      <div style="flex:1;min-width:220px;">${metaBlock}</div>
+      ${!state.editingMeta ? `<button class="btn-ghost" id="btn-edit-meta">Edit details</button>` : ""}
+    </div>
+
+    <div class="status-row">
+      <div class="status-label">Status</div>
+      <div class="status-pills">
+        ${STATUSES.map(s => `
+          <button class="pill ${piece.status === s.id ? "active" : ""}" data-status="${s.id}"
+            style="${piece.status === s.id ? `background:${s.color};border-color:${s.color};` : ""}">
+            ${piece.status === s.id ? "✓ " : ""}${s.label}
+          </button>
+        `).join("")}
+      </div>
+    </div>
+
+    ${piece.notes && !state.editingMeta ? `<div class="notes-box">${escapeHtml(piece.notes)}</div>` : ""}
+
+    <div class="photos-header">
+      <h3 class="serif">Progress photos</h3>
+      <span class="photos-count">${photos.length} ${photos.length === 1 ? "photo" : "photos"}</span>
+    </div>
+
+    <input type="file" id="photo-input" accept="image/*" multiple capture="environment" class="hidden">
+
+    <div class="filmstrip">
+      <div class="add-photo-btn" id="btn-add-photo">
+        <span style="font-size:20px;">📷</span>
+        <span id="upload-label">Add photo</span>
+      </div>
+      ${photos.slice().reverse().map((photo, revIdx) => {
+        const idx = photos.length - 1 - revIdx;
+        return `
+          <div class="photo-thumb" data-photo-idx="${idx}">
+            <img src="${photo.dataUrl}" alt="Progress ${idx + 1}">
+            <span class="photo-index">${idx + 1}</span>
+            <button class="photo-remove" data-remove-photo="${photo.id}">✕</button>
+          </div>
+        `;
+      }).join("")}
+    </div>
+
+    ${photos.length === 0 ? `<p class="hint" style="margin-top:10px;">Add your first progress photo to start this piece's timeline. Earliest photo on the right, most recent on the left.</p>` : ""}
+
+    <div class="danger-zone">
+      ${!state.confirmDelete ? `
+        <button class="danger-link" id="btn-delete-piece">🗑 Remove this piece</button>
+      ` : `
+        <div class="danger-confirm">
+          Delete "${escapeHtml(piece.title)}" and all its photos? This can't be undone.
+          <button class="btn-danger" id="btn-confirm-delete">Delete</button>
+          <button class="btn-ghost" id="btn-cancel-delete">Cancel</button>
+        </div>
+      `}
+    </div>
+  `;
+}
+
+// ============================================================
+// LIGHTBOX
+// ============================================================
+function renderLightbox() {
+  let existing = document.getElementById("lightbox-overlay");
+  if (existing) existing.remove();
+  if (!state.lightbox) return;
+
+  const piece = state.pieces.find(p => p.id === state.activeId);
+  if (!piece) return;
+  const photos = piece.photos || [];
+  const idx = state.lightbox.idx;
+  const photo = photos[idx];
+  if (!photo) return;
+
+  const overlay = document.createElement("div");
+  overlay.id = "lightbox-overlay";
+  overlay.className = "lightbox-overlay";
+  overlay.innerHTML = `
+    <div class="lightbox-img-wrap"><img src="${photo.dataUrl}" alt=""></div>
+    <div class="lightbox-nav">
+      <button id="lb-prev" ${idx === 0 ? "disabled" : ""}>← Earlier</button>
+      <span>${idx + 1} / ${photos.length}</span>
+      <button id="lb-next" ${idx === photos.length - 1 ? "disabled" : ""}>Later →</button>
+    </div>
+    <button class="lightbox-close" id="lb-close">✕</button>
+  `;
+  document.body.appendChild(overlay);
+
+  overlay.addEventListener("click", (e) => { if (e.target === overlay) setState({ lightbox: null }); });
+  document.getElementById("lb-close").addEventListener("click", () => setState({ lightbox: null }));
+  document.getElementById("lb-prev").addEventListener("click", (e) => { e.stopPropagation(); if (idx > 0) setState({ lightbox: { idx: idx - 1 } }); });
+  document.getElementById("lb-next").addEventListener("click", (e) => { e.stopPropagation(); if (idx < photos.length - 1) setState({ lightbox: { idx: idx + 1 } }); });
+}
+
+document.addEventListener("keydown", (e) => {
+  if (!state.lightbox) return;
+  const piece = state.pieces.find(p => p.id === state.activeId);
+  const photos = piece ? (piece.photos || []) : [];
+  if (e.key === "Escape") setState({ lightbox: null });
+  if (e.key === "ArrowLeft" && state.lightbox.idx > 0) setState({ lightbox: { idx: state.lightbox.idx - 1 } });
+  if (e.key === "ArrowRight" && state.lightbox.idx < photos.length - 1) setState({ lightbox: { idx: state.lightbox.idx + 1 } });
+});
+
+// ============================================================
+// EVENT HANDLERS
+// ============================================================
+function attachHandlers() {
+  // Catalog
+  const btnNew = document.getElementById("btn-new-piece");
+  if (btnNew) btnNew.addEventListener("click", () => setState({ view: "new" }));
+
+  const btnEmptyNew = document.getElementById("btn-empty-new");
+  if (btnEmptyNew) btnEmptyNew.addEventListener("click", () => setState({ view: "new" }));
+
+  const searchInput = document.getElementById("search-input");
+  if (searchInput) {
+    searchInput.addEventListener("input", (e) => {
+      state.search = e.target.value;
+      render();
+      const el = document.getElementById("search-input");
+      if (el) { el.focus(); el.setSelectionRange(el.value.length, el.value.length); }
+    });
+  }
+
+  const filterStatusSel = document.getElementById("filter-status");
+  if (filterStatusSel) filterStatusSel.addEventListener("change", (e) => setState({ filterStatus: e.target.value }));
+
+  const filterMediumSel = document.getElementById("filter-medium");
+  if (filterMediumSel) filterMediumSel.addEventListener("change", (e) => setState({ filterMedium: e.target.value }));
+
+  document.querySelectorAll("[data-open-id]").forEach(card => {
+    card.addEventListener("click", () => setState({ view: "detail", activeId: card.dataset.openId, editingMeta: false, confirmDelete: false }));
+  });
+
+  // New piece form
+  const newForm = document.getElementById("new-piece-form");
+  if (newForm) {
+    newForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const title = document.getElementById("np-title").value.trim();
+      if (!title) return;
+      addPiece({
+        title,
+        medium: document.getElementById("np-medium").value,
+        dimensions: document.getElementById("np-dimensions").value.trim(),
+        price: document.getElementById("np-price").value ? Number(document.getElementById("np-price").value) : null,
+        status: document.getElementById("np-status").value,
+        notes: document.getElementById("np-notes").value.trim(),
+        photos: [],
+      });
+    });
+  }
+  const btnCancelNew = document.getElementById("btn-cancel-new");
+  if (btnCancelNew) btnCancelNew.addEventListener("click", () => setState({ view: "catalog" }));
+
+  const btnBack = document.getElementById("btn-back-catalog");
+  if (btnBack) btnBack.addEventListener("click", () => setState({ view: "catalog", editingMeta: false, confirmDelete: false }));
+
+  // Detail: status pills
+  document.querySelectorAll(".pill").forEach(pill => {
+    pill.addEventListener("click", () => updatePiece(state.activeId, { status: pill.dataset.status }));
+  });
+
+  // Detail: edit meta
+  const btnEditMeta = document.getElementById("btn-edit-meta");
+  if (btnEditMeta) btnEditMeta.addEventListener("click", () => setState({ editingMeta: true }));
+  const btnCancelMeta = document.getElementById("btn-cancel-meta");
+  if (btnCancelMeta) btnCancelMeta.addEventListener("click", () => setState({ editingMeta: false }));
+  const btnSaveMeta = document.getElementById("btn-save-meta");
+  if (btnSaveMeta) {
+    btnSaveMeta.addEventListener("click", () => {
+      const priceVal = document.getElementById("em-price").value;
+      updatePiece(state.activeId, {
+        title: document.getElementById("em-title").value.trim(),
+        medium: document.getElementById("em-medium").value,
+        dimensions: document.getElementById("em-dimensions").value.trim(),
+        price: priceVal ? Number(priceVal) : null,
+        notes: document.getElementById("em-notes").value.trim(),
+      });
+      state.editingMeta = false;
+      render();
+    });
+  }
+
+  // Detail: photos
+  const photoInput = document.getElementById("photo-input");
+  const btnAddPhoto = document.getElementById("btn-add-photo");
+  if (btnAddPhoto && photoInput) {
+    btnAddPhoto.addEventListener("click", () => photoInput.click());
+    photoInput.addEventListener("change", async (e) => {
+      const files = Array.from(e.target.files || []);
+      if (!files.length) return;
+      const label = document.getElementById("upload-label");
+      if (label) label.textContent = "Uploading…";
+      btnAddPhoto.style.pointerEvents = "none";
+      try {
+        const newPhotos = [];
+        for (const file of files) {
+          const raw = await fileToDataUrl(file);
+          const compressed = await compressImage(raw);
+          newPhotos.push({ id: uid(), dataUrl: compressed, addedAt: Date.now() });
+        }
+        addPhotosToPiece(state.activeId, newPhotos);
+      } catch (err) {
+        showToast("Couldn't process that photo, try again");
+      } finally {
+        e.target.value = "";
+      }
+    });
+  }
+
+  document.querySelectorAll("[data-photo-idx]").forEach(thumb => {
+    thumb.addEventListener("click", (e) => {
+      if (e.target.closest("[data-remove-photo]")) return;
+      setState({ lightbox: { idx: Number(thumb.dataset.photoIdx) } });
+    });
+  });
+  document.querySelectorAll("[data-remove-photo]").forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      removePhotoFromPiece(state.activeId, btn.dataset.removePhoto);
+    });
+  });
+
+  // Detail: delete piece
+  const btnDeletePiece = document.getElementById("btn-delete-piece");
+  if (btnDeletePiece) btnDeletePiece.addEventListener("click", () => setState({ confirmDelete: true }));
+  const btnConfirmDelete = document.getElementById("btn-confirm-delete");
+  if (btnConfirmDelete) btnConfirmDelete.addEventListener("click", () => deletePieceById(state.activeId));
+  const btnCancelDelete = document.getElementById("btn-cancel-delete");
+  if (btnCancelDelete) btnCancelDelete.addEventListener("click", () => setState({ confirmDelete: false }));
+}
+
+// ============================================================
+// INIT
+// ============================================================
+render();
+</script>
+</body>
+</html>
