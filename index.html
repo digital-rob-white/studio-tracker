@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Rob White Studio — Catalog</title>
-<meta name="theme-color" content="#2B2825">
+<meta name="theme-color" content="#2A2627">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -14,16 +14,16 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --charcoal: #2B2825;
-    --parchment: #F6F1E7;
-    --clay: #B5562F;
-    --clay-dark: #9C4423;
-    --sage: #6B7560;
-    --gold: #C9A35C;
-    --ink-soft: #6B6356;
-    --ink-faint: #8C8273;
-    --line: #E4DCC9;
-    --line-soft: #ECE4D2;
+    --charcoal: #2A2627;
+    --parchment: #F9EEF2;
+    --clay: #F9475F;
+    --clay-dark: #DA2E48;
+    --sage: #4A7E08;
+    --gold: #038EF6;
+    --ink-soft: #66564C;
+    --ink-faint: #98796C;
+    --line: #E3C9CE;
+    --line-soft: #EEDDE1;
     --card-bg: #ffffff;
   }
   * { box-sizing: border-box; }
@@ -42,7 +42,7 @@
     outline: 2px solid var(--clay); outline-offset: 1px;
   }
   ::-webkit-scrollbar { height: 8px; width: 8px; }
-  ::-webkit-scrollbar-thumb { background: #D8CFBC; border-radius: 8px; }
+  ::-webkit-scrollbar-thumb { background: #E0BFC6; border-radius: 8px; }
   ::-webkit-scrollbar-track { background: transparent; }
 
   #app { max-width: 1140px; margin: 0 auto; padding: 24px 18px 70px; min-height: 100vh; }
@@ -86,7 +86,7 @@
     transition: transform 0.15s ease, box-shadow 0.15s ease;
   }
   .card:hover { transform: translateY(-3px); box-shadow: 0 10px 24px rgba(43,40,37,0.14); }
-  .card-photo { height: 150px; background: #EFE8D8; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+  .card-photo { height: 150px; background: #F3DEE3; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; }
   .card-photo img { width: 100%; height: 100%; object-fit: cover; }
   .badge-status { position: absolute; top: 8px; left: 8px; color: #fff; font-size: 10.5px; font-weight: 600; padding: 3px 8px; border-radius: 20px; letter-spacing: 0.03em; }
   .badge-count { position: absolute; bottom: 8px; right: 8px; background: rgba(0,0,0,0.55); color: #fff; font-size: 10.5px; padding: 2px 7px; border-radius: 20px; }
@@ -98,7 +98,7 @@
   .card-price { font-size: 15px; font-weight: 600; color: var(--clay); }
 
   /* empty state */
-  .empty { text-align: center; padding: 64px 20px; border: 1.5px dashed #D8CFBC; border-radius: 12px; background: rgba(255,255,255,0.4); }
+  .empty { text-align: center; padding: 64px 20px; border: 1.5px dashed #E0BFC6; border-radius: 12px; background: rgba(255,255,255,0.4); }
   .empty .emoji { font-size: 36px; margin-bottom: 10px; }
   .empty h3 { font-size: 19px; margin: 0 0 6px; }
   .empty p { color: var(--ink-faint); font-size: 14px; margin: 0 0 18px; }
@@ -119,7 +119,7 @@
   .detail-header { display: flex; justify-content: space-between; align-items: flex-start; margin-top: 16px; gap: 16px; flex-wrap: wrap; }
   .detail-title { font-size: 28px; font-weight: 600; margin: 0 0 6px; }
   .detail-meta { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; font-size: 13.5px; color: var(--ink-soft); }
-  .meta-dot { width: 3px; height: 3px; border-radius: 50%; background: #C7BEA8; display: inline-block; }
+  .meta-dot { width: 3px; height: 3px; border-radius: 50%; background: #CBA8AF; display: inline-block; }
   .price-meta { color: var(--clay); font-weight: 600; }
 
   .status-row { margin-top: 18px; margin-bottom: 22px; }
@@ -140,7 +140,7 @@
 
   .filmstrip { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 10px; -webkit-overflow-scrolling: touch; }
   .add-photo-btn {
-    flex: 0 0 130px; height: 130px; border: 1.5px dashed #C7BEA8; border-radius: 10px; background: rgba(255,255,255,0.5);
+    flex: 0 0 130px; height: 130px; border: 1.5px dashed #CBA8AF; border-radius: 10px; background: rgba(255,255,255,0.5);
     display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; cursor: pointer; color: var(--ink-faint);
   }
   .add-photo-btn span { font-size: 12.5px; font-weight: 600; }
@@ -200,11 +200,11 @@
 const STORAGE_KEY = "rws_pieces_v1";
 
 const STATUSES = [
-  { id: "concept", label: "Concept", color: "#8C8273" },
-  { id: "in_progress", label: "In Progress", color: "#6B7560" },
-  { id: "finishing", label: "Finishing", color: "#C9A35C" },
-  { id: "available", label: "Available", color: "#B5562F" },
-  { id: "sold", label: "Sold", color: "#2B2825" },
+  { id: "concept", label: "Concept", color: "#98796C" },
+  { id: "in_progress", label: "In Progress", color: "#4A7E08" },
+  { id: "finishing", label: "Finishing", color: "#038EF6" },
+  { id: "available", label: "Available", color: "#F9475F" },
+  { id: "sold", label: "Sold", color: "#2A2627" },
 ];
 const MEDIUMS = ["Painting", "Custom Canvas", "Frame", "Sculpture", "Custom Furniture"];
 
@@ -484,7 +484,7 @@ function renderPieceCard(piece) {
   return `
     <div class="card" data-open-id="${piece.id}">
       <div class="card-photo">
-        ${cover ? `<img src="${cover.dataUrl}" alt="${escapeHtml(piece.title)}">` : `<span style="font-size:22px;color:#C7BEA8">🖼️</span>`}
+        ${cover ? `<img src="${cover.dataUrl}" alt="${escapeHtml(piece.title)}">` : `<span style="font-size:22px;color:#CBA8AF">🖼️</span>`}
         <span class="badge-status" style="background:${meta.color}">${meta.label}</span>
         ${piece.photos && piece.photos.length > 1 ? `<span class="badge-count">${piece.photos.length} photos</span>` : ""}
       </div>
